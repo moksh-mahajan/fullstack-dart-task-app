@@ -1,11 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/widgets/task_list_view.dart';
-import 'package:shared/shared.dart';
 
-class HomePage extends StatelessWidget {
+import 'core/bloc/bloc/task_bloc.dart';
+
+class HomePage extends StatefulWidget {
   const HomePage({
     super.key,
   });
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final _taskTitleController = TextEditingController();
+
+  @override
+  void dispose() {
+    _taskTitleController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,21 +29,33 @@ class HomePage extends StatelessWidget {
       body: Column(
         children: [
           Expanded(
-            child: TaskListView(
-              tasks: [
-                Task(id: '1', title: 'Task 1'),
-                Task(id: '2', title: 'Task 2', isCompleted: true),
-                Task(id: '3', title: 'Task 3'),
-              ],
+            child: BlocBuilder<TaskBloc, TaskState>(
+              builder: (context, state) {
+                if (state.isLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator.adaptive(),
+                  );
+                }
+                final tasks = state.tasks;
+
+                if (tasks.isEmpty) {
+                  return const Center(
+                    child: Text('No task to show!'),
+                  );
+                }
+
+                return TaskListView(tasks: tasks);
+              },
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: TextField(
-                    decoration: InputDecoration(
+                    controller: _taskTitleController,
+                    decoration: const InputDecoration(
                       isDense: true,
                       label: Text('New Task'),
                       border: OutlineInputBorder(),
@@ -37,8 +64,19 @@ class HomePage extends StatelessWidget {
                 ),
                 const SizedBox(width: 16),
                 FloatingActionButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    context
+                        .read<TaskBloc>()
+                        .add(AddTask(title: _taskTitleController.text.trim()));
+                    _taskTitleController.clear();
+                  },
                   child: const Icon(Icons.check),
+                ),
+                const SizedBox(width: 16),
+                FloatingActionButton(
+                  onPressed: () =>
+                      context.read<TaskBloc>().add(const LoadTasks()),
+                  child: const Icon(Icons.refresh),
                 )
               ],
             ),
@@ -48,5 +86,3 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
-
