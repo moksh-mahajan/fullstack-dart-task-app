@@ -1,11 +1,12 @@
 import 'package:shared/shared.dart';
+import 'package:uuid/uuid.dart';
 
 class InMemoryTaskRepo implements TaskRepo {
   var _data = <Task>[];
 
   @override
   Future<Task> addTask(Task task) async {
-    final newTask = task.copyWith(id: '${_data.length}');
+    final newTask = task.copyWith(id: const Uuid().v4());
     _data.add(newTask);
     return newTask;
   }
@@ -28,6 +29,5 @@ class InMemoryTaskRepo implements TaskRepo {
   @override
   Future<void> updateTask(Task task) async {
     _data = _data.map((e) => e.id == task.id ? task : e).toList();
-
   }
 }
