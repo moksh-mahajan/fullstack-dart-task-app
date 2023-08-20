@@ -28,8 +28,38 @@ class TaskListView extends StatelessWidget {
             final task = tasks[index];
 
             return ListTile(
-              title: Text(task.title),
-              trailing: task.isCompleted ? const Icon(Icons.check) : null,
+              title: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.amber.shade100,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  task.title,
+                  style: TextStyle(
+                    decoration:
+                        task.isCompleted ? TextDecoration.lineThrough : null,
+                  ),
+                ),
+              ),
+              trailing: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.2,
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {},
+                      color: Colors.green,
+                      icon: const Icon(Icons.done),
+                    ),
+                    IconButton(
+                      onPressed: () =>
+                          context.read<TaskBloc>().add(DeleteTask(id: task.id)),
+                      color: Colors.red,
+                      icon: const Icon(Icons.delete),
+                    ),
+                  ],
+                ),
+              ),
             );
           },
           itemCount: tasks.length,

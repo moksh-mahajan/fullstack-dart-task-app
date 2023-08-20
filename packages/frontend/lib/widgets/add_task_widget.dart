@@ -45,11 +45,7 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
             },
             child: const Icon(Icons.check),
           ),
-          const SizedBox(width: 16),
-          FloatingActionButton(
-            onPressed: () => context.read<TaskBloc>().add(const LoadTasks()),
-            child: const Icon(Icons.refresh),
-          )
+         
         ],
       ),
     );

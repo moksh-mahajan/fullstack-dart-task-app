@@ -7,6 +7,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   TaskBloc({required this.taskRepo}) : super(const TaskState()) {
     on<LoadTasks>(_onLoadTasks);
     on<AddTask>(_onAddTask);
+    on<DeleteTask>(_onDeleteTask);
   }
 
   final TaskRepo taskRepo;
@@ -25,8 +26,14 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     Emitter<TaskState> emit,
   ) async {
     emit(state.copyWith(isLoading: true));
-    final newTask = await taskRepo.addTask(Task(id: '', title: event.title));
-    emit(state.copyWith(isLoading: false, tasks: [...state.tasks, newTask]));
+    await taskRepo.addTask(Task(id: '', title: event.title));
+    add(const LoadTasks());
+  }
+
+  Future<void> _onDeleteTask(DeleteTask event, Emitter<TaskState> emit) async {
+    emit(state.copyWith(isLoading: true));
+    await taskRepo.deleteTask(event.id);
+    add(const LoadTasks());
   }
 }
 
@@ -58,4 +65,9 @@ final class LoadTasks extends TaskEvent {
 final class AddTask extends TaskEvent {
   const AddTask({required this.title});
   final String title;
+}
+
+final class DeleteTask extends TaskEvent {
+  const DeleteTask({required this.id});
+  final String id;
 }
