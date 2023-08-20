@@ -27,6 +27,12 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
         children: [
           Expanded(
             child: TextField(
+              onSubmitted: (_) {
+                context
+                    .read<TaskBloc>()
+                    .add(AddTask(title: _taskTitleController.text.trim()));
+                _taskTitleController.clear();
+              },
               controller: _taskTitleController,
               decoration: const InputDecoration(
                 isDense: true,
@@ -45,7 +51,6 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
             },
             child: const Icon(Icons.check),
           ),
-         
         ],
       ),
     );

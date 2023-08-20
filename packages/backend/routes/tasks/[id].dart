@@ -17,8 +17,8 @@ Future<Response> _onGet(RequestContext context, String id) async {
 }
 
 Future<Response> _onPut(RequestContext context, String id) async {
-  final json = context.request.json() as Map<String, dynamic>;
-  final task = Task.fromJson(json);
+  final json = await context.request.json();
+  final task = Task.fromJson(json as Map<String, dynamic>);
   await context.read<TaskRepo>().updateTask(task);
 
   return Response();

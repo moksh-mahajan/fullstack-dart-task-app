@@ -47,9 +47,14 @@ class TaskListView extends StatelessWidget {
                 child: Row(
                   children: [
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () => context.read<TaskBloc>().add(
+                          UpdateTaskStatus(
+                              task: task.copyWith(
+                                  isCompleted: !task.isCompleted))),
                       color: Colors.green,
-                      icon: const Icon(Icons.done),
+                      icon: Icon(task.isCompleted
+                          ? Icons.check_box
+                          : Icons.check_box_outline_blank),
                     ),
                     IconButton(
                       onPressed: () =>
